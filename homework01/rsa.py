@@ -13,7 +13,10 @@ def is_prime(n):
     False
     """
     # PUT YOUR CODE HERE
-    pass
+    for i in range(2, round(pow(n, 0.5))):
+        if n % i == 0:
+            return False
+    return True
 
 
 def gcd(a, b):
