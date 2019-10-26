@@ -1,5 +1,6 @@
 from typing import Tuple, List, Set, Optional
-
+import random
+from random import randint
 
 def read_sudoku(filename: str) -> List[List[str]]:
     """ Прочитать Судоку из указанного файла """
@@ -123,25 +124,43 @@ def find_possible_values(grid: List[List[str]], pos: Tuple[int, int]) -> Set[str
 
 
 def solve(grid: List[List[str]]) -> Optional[List[List[str]]]:
-    """ Решение пазла, заданного в grid """
-    """ Как решать Судоку?
-        1. Найти свободную позицию
-        2. Найти все возможные значения, которые могут находиться на этой позиции
-        3. Для каждого возможного значения:
-            3.1. Поместить это значение на эту позицию
-            3.2. Продолжить решать оставшуюся часть пазла
+    """ Решение пазла, заданного в grid
 
     >>> grid = read_sudoku('puzzle1.txt')
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    pass
+    pos = find_empty_positions(grid)
+    if pos is not None:
+        if find_possible_values(grid, pos) is not None:
+            for g in find_possible_values(grid, pos):
+                grid[pos[0]][pos[1]] = g
+                solve(grid)
+                if find_empty_positions(grid) is None:
+                    return grid        
+            grid[pos[0]][pos[1]] = '.'
+    else:
+        return grid
 
 
 def check_solution(solution: List[List[str]]) -> bool:
-    """ Если решение solution верно, то вернуть True, в противном случае False """
-    # TODO: Add doctests with bad puzzles
-    pass
+    """ Если решение solution верно, то вернуть True, в противном случае False 
+    
+    >>> solution = [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '1', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
+    >>> check_solution(solution)
+    False
+    """
+    correct = True
+    for i in range(9):
+        row = get_row(solution, (i, 0))
+        correct = correct and (len(row) == len(set(row)))
+        col = get_col(solution, (0, i))
+        correct = correct and (len(col) == len(set(col)))
+        block = get_block(solution, ((i // 3) * 3, (i % 3) * 3))
+        correct = correct and (len(block) == len(set(block)))
+        if not correct:
+            break
+    return correct
 
 
 def generate_sudoku(N: int) -> List[List[str]]:
@@ -166,7 +185,15 @@ def generate_sudoku(N: int) -> List[List[str]]:
     >>> check_solution(solution)
     True
     """
-    pass
+    grid = [['.'] * 9 for i in range(9)]
+    grid = solve(grid)
+    remain = 81
+    while remain > N:
+        pos = randint(0, 8), randint(0, 8)
+        if grid[pos[0]][pos[1]] != '.':
+            grid[pos[0]][pos[1]] = '.'
+            remain -= 1
+    return grid
 
 
 if __name__ == '__main__':
