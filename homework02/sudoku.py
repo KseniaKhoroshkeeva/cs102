@@ -2,6 +2,7 @@ from typing import Tuple, List, Set, Optional
 import random
 from random import randint
 
+
 def read_sudoku(filename: str) -> List[List[str]]:
     """ Прочитать Судоку из указанного файла """
     digits = [c for c in open(filename).read() if c in '123456789.']
@@ -66,6 +67,7 @@ def get_col(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
         col.append(grid[i][pos[1]])
     return col
 
+
 def get_block(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
     """ Возвращает все значения из квадрата, в который попадает позиция pos
 
@@ -81,7 +83,7 @@ def get_block(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
     pos0 = (pos[0] // 3) * 3, (pos[1] // 3) * 3
     for i in range(3):
         for j in range(3):
-            block.append(grid[i + pos0[0]][j + pos0[1]]) 
+            block.append(grid[i + pos0[0]][j + pos0[1]])
     return block
 
 
@@ -137,15 +139,15 @@ def solve(grid: List[List[str]]) -> Optional[List[List[str]]]:
                 grid[pos[0]][pos[1]] = g
                 solve(grid)
                 if find_empty_positions(grid) is None:
-                    return grid        
+                    return grid
             grid[pos[0]][pos[1]] = '.'
     else:
         return grid
 
 
 def check_solution(solution: List[List[str]]) -> bool:
-    """ Если решение solution верно, то вернуть True, в противном случае False 
-    
+    """ Если решение solution верно, то вернуть True, в противном случае False
+
     >>> solution = [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '1', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     >>> check_solution(solution)
     False
