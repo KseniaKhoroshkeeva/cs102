@@ -1,5 +1,6 @@
 import pygame
 import random
+import copy
 
 from pygame.locals import *
 from typing import List, Tuple
@@ -60,6 +61,7 @@ class GameOfLife:
             # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
             # PUT YOUR CODE HERE
+            self.grid = self.get_next_generation()
             self.draw_grid()
 
             pygame.display.flip()
@@ -123,7 +125,15 @@ class GameOfLife:
         out : Cells
             Список соседних клеток.
         """
-        pass
+
+        n = []
+
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if (i >= 0) and (i <= self.cell_height - 1) and (j >= 0) and (j <= self.cell_width - 1) and not (i == cell[0] and j == cell[1]):
+                    n.append(self.grid[i][j])
+
+        return n
 
     def get_next_generation(self) -> Grid:
         """
@@ -134,4 +144,18 @@ class GameOfLife:
         out : Grid
             Новое поколение клеток.
         """
-        pass
+        new_grid = copy.deepcopy(self.grid)
+        for i in range(self.cell_height):
+            for j in range(self.cell_width):
+                pos = (i, j)
+                neigh = 0
+                for k in range(len(self.get_neighbours(pos))):
+                    if self.get_neighbours(pos)[k] == 1:
+                        neigh += 1
+                if self.grid[i][j] == 1:
+                    if neigh != 2 and neigh != 3:
+                        new_grid[i][j] = 0
+                else:
+                    if neigh == 3:
+                        new_grid[i][j] = 1
+        return new_grid
