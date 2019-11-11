@@ -72,7 +72,7 @@ class GameOfLife:
         """
         self.prev_generation = copy.deepcopy(self.curr_generation)
         self.curr_generation = self.get_next_generation()
-        self.generations +f= 1
+        self.generations += 1
 
     @property
     def is_max_generations_exceeded(self) -> bool:
