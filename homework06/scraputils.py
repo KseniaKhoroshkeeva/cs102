@@ -22,12 +22,12 @@ def extract_news(parser):
             all_comments.append(int(our_comment[:c]))
         else:
             all_comments.append(0)    
-    print(len(all_points),len(all_title),len(all_url),len(all_authors),len(all_comments))
+    #print(len(all_points),len(all_title),len(all_url),len(all_authors),len(all_comments))
     d = {}
     for i in range(len(all_authors)):
         d = {'author': all_authors[i], 'comments': all_comments[i], 'points':all_points[i], 'title': all_title[i], 'url': all_url[i]}
         news_list.append(d)
-    print(news_list)
+    #print(news_list)
 
 
     return news_list
@@ -35,7 +35,8 @@ def extract_news(parser):
 
 def extract_next_page(parser):
     """ Extract next page URL """
-    # PUT YOUR CODE HERE
+    next_p = parser.find('a', class_ = 'morelink')['href']
+    return next_p
 
 
 def get_news(url="https://news.ycombinator.com/newest", n_pages=1):
@@ -47,9 +48,9 @@ def get_news(url="https://news.ycombinator.com/newest", n_pages=1):
         soup = BeautifulSoup(response.text, "html.parser")
         news_list = extract_news(soup)
         next_page = extract_next_page(soup)
+        #print(next_page)
         url = "https://news.ycombinator.com/" + next_page
         news.extend(news_list)
         n_pages -= 1
     return news
 
-get_news()
