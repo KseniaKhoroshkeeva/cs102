@@ -21,16 +21,17 @@ class News(Base):
 
 Base.metadata.create_all(bind=engine)
 
-def news1000(n=34):
-    all_pages = get_news(n_pages=n)
+
+def fill_database(n_pages=10):
     s = session()
-    for i in range(len(all_pages)):
-        news = News(title = all_pages[i]['title'],
-        author=all_pages[i]['author'],
-        url=all_pages[i]['url'],
-        comments=all_pages[i]['comments'],
-        points=all_pages[i]['points'])
+    news_list = get_news('https://news.ycombinator.com/newest', n_pages)
+    for n in news_list:
+        news = News(
+            title=n['title'],
+            author=n['author'],
+            url=n['url'],
+            comments=n['comments'],
+            points=n['points']
+        )
         s.add(news)
     s.commit()
-
-news1000(n=1)
